@@ -33,8 +33,20 @@ int main() {
         count++;
     }
 
+    // creating pipes
+    int prev_pipe[2];
+    if (pipe(prev_pipe) == -1) {return 1;}
+    // pipe[0]: Reading
+    // pipe[1]: writing
+
     // processing the input
     for (int i = 0; i < count; i++) {
+
+        int cur_pipe[2];
+        if (pipe(cur_pipe) == -1) {return 1;}
+        // pipe[0]: Reading
+        // pipe[1]: writing
+
         // Forking
         int id = fork();
         if (id == -1) {
@@ -45,23 +57,45 @@ int main() {
         if (id == 0) {
             // child process
 
+            close(prev_pipe[1]); // write of prev
+            close(cur_pipe[0]); // read of current
+            
+            if (i != 0) {
+                dup2(prev_pipe[0], 0); // reading from the prev
+            }
+
+            if (i != count - 1) {
+                dup2(cur_pipe[1], 1); // writing to the cur
+            }
+
+            close(prev_pipe[0]);
+            close(prev_pipe[1]);
+
             // getting the command in terms of array
             char** cmd = convetCommands(cmds[i]);
-            
             // running the excv command
             execvp(cmd[0], cmd);
 
             // incase the execvp fails
             free(cmd);
             perror("execvp");
-            return 1;
-
+            return 2;
         } else {
-            // parent process
-            wait(NULL);
-        }
-    }
+            if (i == count - 1) {
+                continue;
+            }
 
+            // parent process
+            close(prev_pipe[0]); // read of prev
+            close(prev_pipe[1]); // write of current
+            
+            prev_pipe[0] = cur_pipe[0];
+            prev_pipe[1] = cur_pipe[1];
+
+            wait(NULL);
+        } 
+
+    }
 
     return 0;
 }
