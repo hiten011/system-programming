@@ -1,7 +1,7 @@
 all : sequence pipeline
 
-sequence: 
-	gcc $@.c -o $@.out
+sequence: sequence.c
+	gcc $@.c -o $@
 
-pipeline:
-	gcc $@.c -o $@.out
+pipeline: pipeline.c
+	gcc $@.c -o $@
