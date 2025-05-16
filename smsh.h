@@ -10,3 +10,6 @@ int	execute(char **);
 void	fatal(char *, char *, int );
 
 int	process();
+
+// my functions
+char** splitpipe(char* cmdline, int* n);

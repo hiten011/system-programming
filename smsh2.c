@@ -14,7 +14,7 @@
 
 int main()
 {
-	char	*cmdline, *prompt, **arglist;
+	char	*cmdline, *prompt, **arglist,  **cmds;
 	int	result;
 	void	setup();
 
@@ -22,10 +22,16 @@ int main()
 	setup();
 
 	while ( (cmdline = next_cmd(prompt, stdin)) != NULL ){
-		if ( (arglist = splitline(cmdline)) != NULL  ){
-			result = execute(arglist);
-			freelist(arglist);
+		int n; // stores length of commands in pipes
+		char** cmds = splitpipe(cmdline, &n);
+		for (int i = 0; i < n; i++) {
+			printf("%s", cmds[i]);
+			if ( (arglist = splitline(cmds[i])) != NULL  ){
+				result = execute(arglist);
+				freelist(arglist);
+			}
 		}
+
 		free(cmdline);
 	}
 	return 0;
