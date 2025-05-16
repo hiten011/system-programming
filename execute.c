@@ -79,15 +79,11 @@ int executePipes(char *argv[], int* rpipe, int* wpipe, int index, int n)
 	}
 	else {
 		// swapping the pipes
-
 		close(rpipe[1]);
 		close(rpipe[0]);
 		
 		rpipe[0] = wpipe[0];
 		rpipe[1] = wpipe[1];
-
-		close(wpipe[0]);
-		close(wpipe[1]);
 		
 		if ( wait(&child_info) == -1 )
 			perror("wait");

@@ -32,6 +32,7 @@ int main()
 
 		for (int i = 0; i < n; i++) {
 			// runs the loop for each commans
+			// printf("%s", cmds[i]);
 
 			// creating writing pipe
 			int wpipe[2];

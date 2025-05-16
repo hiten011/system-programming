@@ -150,7 +150,7 @@ char **splitpipe(char *cmdline, int *n) {
 	// split the string in form of pipes
 	*n = 0;
 	char** token = malloc(sizeof(cmdline));
-	const char* delimeter = "|";
+	const char* delimeter = "|\n";
 
 	token[(*n)] = strtok(cmdline, delimeter);
 
