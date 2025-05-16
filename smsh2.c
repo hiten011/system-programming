@@ -24,10 +24,16 @@ int main()
 	while ( (cmdline = next_cmd(prompt, stdin)) != NULL ){
 		int n; // stores length of commands in pipes
 		char** cmds = splitpipe(cmdline, &n);
+		// printf("%d %s %s", n, cmds[0], cmds[1]);
+
+		// creating pipes
+		int rpipe[2]; // reading pipe
+		pipe(rpipe);
+
 		for (int i = 0; i < n; i++) {
-			printf("%s", cmds[i]);
+			// runs the loop for each commans
 			if ( (arglist = splitline(cmds[i])) != NULL  ){
-				result = execute(arglist);
+				result = executePipes(arglist, rpipe);
 				freelist(arglist);
 			}
 		}
