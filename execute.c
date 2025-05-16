@@ -36,7 +36,7 @@ int execute(char *argv[])
 	return child_info;
 }
 
-int executePipes(char *argv[], int* rpipe)
+int executePipes(char *argv[], int* rpipe, int* wpipe, int index, int n)
 /*
  * purpose: run a program passing it arguments
  * returns: status returned via wait, or -1 on error
@@ -47,10 +47,6 @@ int executePipes(char *argv[], int* rpipe)
 	int	pid ;
 	int	child_info = -1;
 
-	// creating writing pipe
-	int wpipe[2];
-	pipe(wpipe);
-
 	if ( argv[0] == NULL )		/* nothing succeeds	*/
 		return 0;
 
@@ -58,13 +54,23 @@ int executePipes(char *argv[], int* rpipe)
 		perror("fork");
 	else if ( pid == 0 ){
 
-		// starting reading from pipe ans writing to pipe
 		close(wpipe[0]);
 		close(rpipe[1]);
 
-		dup2(rpipe[0], 0);
-		dup2(wpipe[1], 1);
+		if (index != 0) {
+			// reading from pipe
+			dup2(rpipe[0], 0);
+		}
+		
+		// wrinting to pipe
+		if (index < n - 1) {
+			// writing to pipe
+			dup2(wpipe[1], 1);
+		}
 
+		close(rpipe[0]);
+		close(wpipe[1]);
+		
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		execvp(argv[0], argv);
@@ -72,6 +78,17 @@ int executePipes(char *argv[], int* rpipe)
 		exit(1);
 	}
 	else {
+		// swapping the pipes
+
+		close(rpipe[1]);
+		close(rpipe[0]);
+		
+		rpipe[0] = wpipe[0];
+		rpipe[1] = wpipe[1];
+
+		close(wpipe[0]);
+		close(wpipe[1]);
+		
 		if ( wait(&child_info) == -1 )
 			perror("wait");
 	}

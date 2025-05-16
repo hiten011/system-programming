@@ -32,8 +32,13 @@ int main()
 
 		for (int i = 0; i < n; i++) {
 			// runs the loop for each commans
+
+			// creating writing pipe
+			int wpipe[2];
+			pipe(wpipe);
+
 			if ( (arglist = splitline(cmds[i])) != NULL  ){
-				result = executePipes(arglist, rpipe);
+				result = executePipes(arglist, rpipe, wpipe, i, n);
 				freelist(arglist);
 			}
 		}
