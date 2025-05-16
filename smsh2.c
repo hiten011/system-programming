@@ -28,7 +28,7 @@ int main()
 
 		// creating pipes
 		int rpipe[2]; // reading pipe
-		pipe(rpipe);
+		if (pipe(rpipe) == -1) return 1;
 
 		for (int i = 0; i < n; i++) {
 			// runs the loop for each commans
@@ -36,7 +36,7 @@ int main()
 
 			// creating writing pipe
 			int wpipe[2];
-			pipe(wpipe);
+			if (pipe(wpipe) == -1) return 1;
 
 			if ( (arglist = splitline(cmds[i])) != NULL  ){
 				result = executePipes(arglist, rpipe, wpipe, i, n);
