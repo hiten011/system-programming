@@ -6,14 +6,14 @@ char	**splitline(char *);
 void	freelist(char **);
 void	*emalloc(size_t);
 void	*erealloc(void *, size_t);
-int	    execute(char **);
+int	execute(char **);
 void	fatal(char *, char *, int );
 
 int	process();
 
 // my functions
-char** splitpipe(char* cmdline, int* n);
-int search(char *argv[], const char *find);
-int executePipes(char **, int* , int* , int , int );
-char** globbing(char* arglist[]);
-char** expand(char* arglist[], int );
+char**  splitpipe(char* cmdline, int* n);
+int     search(char *argv[], const char *find);
+int     executePipes(char **, int* , int* , int , int );
+char**  globbing(char* arglist[]);
+char**  expand(char* arglist[], int );
