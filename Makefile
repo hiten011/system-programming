@@ -1,7 +1,8 @@
 all: default part1 part2
 
-clean:
-	rm *.out
+clean:	smsh1 smsh2 smsh3
+	rm $^
+	rm *.txt
 
 default: smsh1.c splitline.c execute.c
 	gcc -o smsh1 $^
