@@ -145,18 +145,3 @@ void * erealloc(void *p, size_t n)
 		fatal("realloc() failed","",1);
 	return rv;
 }
-
-char **splitpipe(char *cmdline, int *n) { 
-	// split the string in form of pipes
-	*n = 0;
-	char** token = malloc(10 * sizeof(cmdline));
-	const char* delimeter = "|";
-
-	token[(*n)] = strtok(cmdline, delimeter);
-
-	while (token[*n] != NULL) {
-		token[++(*n)] = strtok(NULL, delimeter);
-	}
-	token[(*n)] = NULL;
-	return token;
-}
