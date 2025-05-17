@@ -23,7 +23,10 @@ int main()
 
 	while ( (cmdline = next_cmd(prompt, stdin)) != NULL ){
 		int n; // stores length of commands in pipes
-		char** cmds = splitpipe(cmdline, &n);
+		char** cmds;
+		if ((cmds = splitpipe(cmdline, &n)) == NULL) {
+			return 1;
+		}
 		// printf("%d %s %s", n, cmds[0], cmds[1]);
 
 		// creating pipes

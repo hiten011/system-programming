@@ -36,7 +36,7 @@ int execute(char *argv[])
 	return child_info;
 }
 
-int executePipes(char *argv[], int* rpipe, int* wpipe, int index, int n)
+int executePipes(char *argv[], int rpipe[2], int wpipe[2], int index, int n)
 /*
  * purpose: run a program passing it arguments
  * returns: status returned via wait, or -1 on error
