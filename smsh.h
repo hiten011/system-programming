@@ -14,3 +14,4 @@ int	process();
 // my functions
 char** splitpipe(char* cmdline, int* n);
 int executePipes(char **, int* , int* , int , int );
+int search(char *argv[], const char *find);

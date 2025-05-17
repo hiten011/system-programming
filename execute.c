@@ -5,6 +5,10 @@
 #include	<unistd.h>
 #include	<signal.h>
 #include	<sys/wait.h>
+#include    <fcntl.h>
+#include    <string.h>
+
+int search(char *argv[], const char *find);
 
 int execute(char *argv[])
 /*
@@ -60,12 +64,38 @@ int executePipes(char *argv[], int rpipe[2], int wpipe[2], int index, int n)
 		if (index != 0) {
 			// reading from pipe
 			dup2(rpipe[0], 0);
+		} else {
+			// if first command check for < (input)redirection
+			int i = search(argv, "<"); // index at < appears
+			if ( i != -1 ) {
+				// found < redirection: opening file and redirecting input from file
+				int fd = open(argv[i + 1], O_RDONLY);
+				dup2(fd, 0);
+
+				close(fd);
+
+				// cutting the argv to store only command
+				argv[i] = NULL;
+			}
 		}
 		
 		// wrinting to pipe
 		if (index < n - 1) {
 			// writing to pipe
 			dup2(wpipe[1], 1);
+		} else {
+			// check for redirection > (output)
+			int o = search(argv, ">"); // index at which > appers
+			if ( o != -1 ) {
+				// found > redirection: opening file and redirecting output to file
+				int fd = open(argv[o + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				dup2(fd, 1);
+
+				close(fd);
+
+				// cutting the argv to store only command
+				argv[o] = NULL;
+			}
 		}
 
 		close(rpipe[0]);
@@ -89,4 +119,14 @@ int executePipes(char *argv[], int rpipe[2], int wpipe[2], int index, int n)
 			perror("wait");
 	}
 	return child_info;
+}
+
+int search(char *argv[], const char* find) { 
+	for (int i = 0; argv[i] != NULL; i++) {
+		if (strcmp(argv[i], find) == 0) {
+			return i;
+		}
+	}
+
+	return -1;
 }
