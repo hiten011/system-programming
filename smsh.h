@@ -15,3 +15,5 @@ int	process();
 char** splitpipe(char* cmdline, int* n);
 int executePipes(char **, int* , int* , int , int );
 int search(char *argv[], const char *find);
+char** globbing(char* arglist[]);
+char** expand(char* arglist[], int );

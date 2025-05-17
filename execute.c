@@ -7,6 +7,8 @@
 #include	<sys/wait.h>
 #include    <fcntl.h>
 #include    <string.h>
+#include    <glob.h>
+#include "smsh.h"
 
 int search(char *argv[], const char *find);
 
@@ -129,4 +131,50 @@ int search(char *argv[], const char* find) {
 	}
 
 	return -1;
+}
+
+char** globbing(char *arglist[]) { 
+	for (int i = 0; arglist[i] != NULL; i++) {
+		if (strchr(arglist[i], '*') != NULL) {
+			// found *
+			arglist = expand(arglist, i);
+		}
+	}
+	return arglist;
+}
+
+char** expand(char *arglist[], int index) { 
+	glob_t glob_result;
+    int ret = glob(arglist[index], 0, NULL, &glob_result);
+	if (ret != 0) {
+        // globfree(&glob_result);
+        return arglist;
+    }
+
+	int len = 0;
+    while (arglist[len]) len++;
+
+    int newLen = len + (int)glob_result.gl_pathc;
+    char **newArr = malloc((newLen) * sizeof(char *));
+
+	// copy previous arguments
+	int pos = 0;
+	for (int i = 0; i < index; i++, pos++) {
+		newArr[pos] = arglist[i];
+	}
+
+	// expansion of wildcard 
+	for (size_t i = 0; i < glob_result.gl_pathc; i++, pos++) {
+		newArr[pos] = glob_result.gl_pathv[i];
+	}
+
+	// copy the rest of array
+	for (int i = index + 1; arglist[i] != NULL; i++, pos++) {
+		newArr[pos] = arglist[i];
+	}
+
+	newArr[pos] = NULL;
+
+	// globfree(&glob_result);
+	return newArr;
 }
