@@ -1,0 +1,12 @@
+Makefile
+README.md
+execute.c
+helper.c
+smsh.h
+smsh1.c
+smsh2.c
+smsh3.c
+smsh4
+smsh4.c
+splitline.c
+wc
