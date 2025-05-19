@@ -5,33 +5,41 @@
 #include <stdbool.h>
 
 pthread_mutex_t mutex;
-bool isPing;
+pthread_cond_t cond1;
+pthread_cond_t cond2;
 
 void* ping(void* ) {
+    pthread_mutex_lock(&mutex);
     for (int i = 0; i < 10; i++) {
-        pthread_mutex_lock(&mutex);
-        if (isPing) {
-            printf("Ping\n");
-        }
-        isPing = !isPing;
-        pthread_mutex_unlock(&mutex);
+        printf("Ping\n");
+        pthread_cond_signal(&cond1);
+        pthread_cond_wait(&cond2, &mutex);
     }
+
+    pthread_cond_signal(&cond1);
+    pthread_mutex_unlock(&mutex);
+
+    return NULL;  
 }
 
 void* pong(void* ) {
+    pthread_mutex_lock(&mutex);
     for (int i = 0; i < 10; i++) {
-        pthread_mutex_lock(&mutex);
-        if (isPing) {
-            printf("Pong\n");
-        }
-        isPing = !isPing;
-        pthread_mutex_unlock(&mutex);
+        printf("Pong\n");
+        pthread_cond_signal(&cond2);
+        pthread_cond_wait(&cond1, &mutex);
     }
+    
+    pthread_cond_signal(&cond2);
+    pthread_mutex_unlock(&mutex);
+
+    return NULL;  
 }
 
 int main() {
     pthread_mutex_init(&mutex, NULL);
-    isPing = true;
+    pthread_cond_init(&cond1, NULL);
+    pthread_cond_init(&cond2, NULL);
 
     pthread_t id[2];
     pthread_create(&id[0], NULL, &ping, NULL);
@@ -40,8 +48,10 @@ int main() {
     for (int i = 0; i < 2; i++) {
         pthread_join(id[i], NULL);
     }
-    
+
     pthread_mutex_destroy(&mutex);
+    pthread_cond_destroy(&cond1);
+    pthread_cond_destroy(&cond2);
 
     return 0;
 }
