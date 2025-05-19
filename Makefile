@@ -1,6 +1,6 @@
-all: task1 task2 task3 task4
+all: task1 task2 task2.1 task3 task4
 
-clean: task1 task2 task3 task4
+clean: task1 task2 task2.1 task3 task4
 	rm $^
 	clear
 
