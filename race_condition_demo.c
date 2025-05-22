@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 int counter = 0;
-const int update = 100000;
+const int update = 100;
 
 void* updateCounter(void*) {
     for (int i = 0; i < update; i++) {

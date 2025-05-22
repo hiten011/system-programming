@@ -1,0 +1,14 @@
+total 68
+-rw-r--r-- 1 root root   334 May 20 17:19 Makefile
+-rw-r--r-- 1 root root    66 May 17 00:04 README.md
+-rw-r--r-- 1 root root   725 May 20 17:19 execute.c
+-rw-r--r-- 1 root root  3369 May 20 17:19 helper.c
+-rw-r--r-- 1 root root   461 May 20 17:19 smsh.h
+-rw-r--r-- 1 root root   953 May 20 17:19 smsh1.c
+-rw-r--r-- 1 root root  1363 May 20 17:19 smsh2.c
+-rw-r--r-- 1 root root  1365 May 20 17:19 smsh3.c
+-rwxr-xr-x 1 root root 21576 May 20 17:20 smsh4
+-rw-r--r-- 1 root root  1431 May 20 17:19 smsh4.c
+-rw-r--r-- 1 root root  3317 May 20 17:19 splitline.c
+-rw-r--r-- 1 root root     0 May 20 17:20 test.txt
+-rw-r--r-- 1 root root    98 May 20 17:19 wc
