@@ -10,25 +10,27 @@ int total_commands = 0;
 // ####################################################################################
 // ## Please write some code in the following two functions
 
-pthread_cond_t writer;
-pthread_cond_t reader;
+pthread_cond_t writerCond;
+pthread_cond_t readerCond;
 pthread_mutex_t lock;
 
 void * writer(void * in_ptr)
 {
 
-	char * commands[100] = in_ptr;
+	char ** commands = in_ptr;
 	//must include bad_write;
 	pthread_mutex_lock(&lock);
 
 	for (int i = 0; i < total_commands; i++) {
 		bad_write(commands[i]);
 
-		pthread_cond_signal(&reader);
+		pthread_cond_signal(&readerCond);
 
 		// waiting for read to finish
-		pthread_cond_wait(&writer, &lock);
+		pthread_cond_wait(&writerCond, &lock);
 	}
+
+	pthread_cond_signal(&readerCond);
 
 	pthread_mutex_unlock(&lock);
 }
@@ -38,12 +40,13 @@ void * reader(void * empty)
 	//must include bad_read
 	pthread_mutex_lock(&lock);
 
-	while (1) {
-		pthread_cond_wait(&reader, &lock);
-
+	while (get_written()) {
 		bad_read(NULL);
 
-		pthread_cond_signal(&writer);
+		pthread_cond_signal(&writerCond);
+		
+		// wait for writer
+		pthread_cond_wait(&readerCond, &lock);
 	}
 
 	pthread_mutex_unlock(&lock);
@@ -55,7 +58,8 @@ void * reader(void * empty)
 int main()
 {
 	// ## SOME SPACE IN CASE YOU NEED TO INITIALISE VARIABLES
-	pthread_cond_init(&cond, NULL);
+	pthread_cond_init(&readerCond, NULL);
+	pthread_cond_init(&writerCond, NULL);
 	pthread_mutex_init(&lock, NULL);
 
 	// ################################################################################
