@@ -1,7 +1,7 @@
 all: part1
 
-clean: PART1
-	rm $^
+clean: part1 part2
+	rm PART1 PART2
 	clear
 
 part1: part1.c slow_functions.c
