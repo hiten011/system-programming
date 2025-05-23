@@ -1,8 +1,8 @@
 all: part1
 
-clean: part1
+clean: PART1
 	rm $^
 	clear
 
 part1: part1.c slow_functions.c
-	gcc -o part1 $^
+	gcc -o PART1 $^

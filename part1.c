@@ -19,7 +19,7 @@ int main() {
     for (int i = 0; i < n; i++) {
         pthread_join(id[i], NULL);
     }
-    gs 
+    
     pthread_join(t1, NULL);
     return 0;
 }
