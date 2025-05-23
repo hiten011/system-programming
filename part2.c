@@ -23,7 +23,8 @@ void * writer(void * in_ptr)
 
 	for (int i = 0; i < total_commands; i++) {
 		bad_write(commands[i]);
-
+		
+		// signal reader to start
 		pthread_cond_signal(&readerCond);
 
 		// waiting for read to finish
@@ -33,6 +34,8 @@ void * writer(void * in_ptr)
 	pthread_cond_signal(&readerCond);
 
 	pthread_mutex_unlock(&lock);
+
+	return NULL;
 }
 
 void * reader(void * empty)
@@ -42,14 +45,19 @@ void * reader(void * empty)
 
 	while (get_written()) {
 		bad_read(NULL);
-
+		
+		// signal writer to start
 		pthread_cond_signal(&writerCond);
 		
 		// wait for writer
 		pthread_cond_wait(&readerCond, &lock);
 	}
 
+	pthread_cond_signal(&writerCond);
+
 	pthread_mutex_unlock(&lock);
+
+	return NULL;
 }
 
 
