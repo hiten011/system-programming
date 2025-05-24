@@ -32,7 +32,6 @@ void * writer(void * in_ptr)
 	}
 
 	pthread_cond_signal(&readerCond);
-
 	pthread_mutex_unlock(&lock);
 
 	return NULL;
@@ -42,6 +41,11 @@ void * reader(void * empty)
 {
 	//must include bad_read
 	pthread_mutex_lock(&lock);
+
+	if (!get_written()) {
+		// wait for writer: incase reader lock first
+		pthread_cond_wait(&readerCond, &lock);
+	}
 
 	while (get_written()) {
 		bad_read(NULL);
@@ -54,7 +58,6 @@ void * reader(void * empty)
 	}
 
 	pthread_cond_signal(&writerCond);
-
 	pthread_mutex_unlock(&lock);
 
 	return NULL;
