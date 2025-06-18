@@ -1,0 +1,1 @@
+ls -la | sort -k 5 -n -r
