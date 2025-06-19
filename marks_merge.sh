@@ -2,35 +2,24 @@
 
 echo "number,prac_mark,exam_mark"
 
-rm -f temp.csv
-touch temp.csv
-
+# Create temp file
 file='temp.csv'
-tail -n +2 "$1" >> $file
-echo >> $file
-tail -n +2 "$2" >> $file
+tail -n +2 "$1" > "$file"
+tail -n +2 "$2" >> "$file"
 
-# storing indexes
-indexes=$( cut -d',' -f1 $file | sort -u )
+# create array
+mapfile -t indexes < <(cut -d',' -f1 "$file" | sort -u)
 
-# Reading array
-for index in ${indexes[@]}
+# Loop through each student
+for index in "${indexes[@]}"
 do
-    prac_mark=$(grep $index "$1" | cut -d',' -f2)
-    exam_mark=$(grep $index "$2" | cut -d',' -f2)
+    prac_mark=$(grep "^$index," "$1" | cut -d',' -f2)
+    exam_mark=$(grep "^$index," "$2" | cut -d',' -f2)
 
-    if [[ -z $prac_mark ]] 
-    then
-        prac_mark='-'
-    fi
+    [[ -z $prac_mark ]] && prac_mark='-'
+    [[ -z $exam_mark ]] && exam_mark='-'
 
-    if [[ -z $exam_mark ]] 
-    then
-        exam_mark='-'
-    fi
+    echo "$index,$prac_mark,$exam_mark"
+done
 
-    # printing answer
-    echo $index,$prac_mark,$exam_mark
-done 
-
-rm -f $file
+rm -f "$file"
