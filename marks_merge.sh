@@ -1,25 +1,31 @@
 #!/bin/bash
 
-echo "number,prac_mark,exam_mark"
+# Temporary folder to store processed files
+temp_dir=$(mktemp -d)
+trap "rm -rf $temp_dir" EXIT
 
-# Create temp file
-file='temp.csv'
-tail -n +2 "$1" > "$file"
-tail -n +2 "$2" >> "$file"
+# Extract all student numbers
+for file in "$@"; do
+    tail -n +2 "$file" | cut -d',' -f1
+done | sort -u > "$temp_dir/student_ids"
 
-# create array
-mapfile -t indexes < <(cut -d',' -f1 "$file" | sort -u)
-
-# Loop through each student
-for index in "${indexes[@]}"
-do
-    prac_mark=$(grep "^$index," "$1" | cut -d',' -f2)
-    exam_mark=$(grep "^$index," "$2" | cut -d',' -f2)
-
-    [[ -z $prac_mark ]] && prac_mark='-'
-    [[ -z $exam_mark ]] && exam_mark='-'
-
-    echo "$index,$prac_mark,$exam_mark"
+# Start building output
+# First, extract header line
+header="number"
+for file in "$@"; do
+    label=$(head -1 "$file" | cut -d',' -f2)
+    header+=",$label"
 done
 
-rm -f "$file"
+echo "$header"
+
+# For each student ID, build their line
+while read -r id; do
+    line="$id"
+    for file in "$@"; do
+        mark=$(grep "^$id," "$file" | cut -d',' -f2)
+        [[ -z "$mark" ]] && mark="-"  # replace empty with dash
+        line+=",$mark"
+    done
+    echo "$line"
+done < "$temp_dir/student_ids"
