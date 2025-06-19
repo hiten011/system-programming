@@ -1,31 +1,29 @@
 #!/bin/bash
 
-# Temporary folder to store processed files
-temp_dir=$(mktemp -d)
-trap "rm -rf $temp_dir" EXIT
-
-# Extract all student numbers
-for file in "$@"; do
+# 1) Build an array of all unique student IDs
+mapfile -t indexes < <(
+  for file in "$@"; do
     tail -n +2 "$file" | cut -d',' -f1
-done | sort -u > "$temp_dir/student_ids"
+  done | sort -u
+)
 
-# Start building output
-# First, extract header line
+# 2) Print the merged header
 header="number"
-for file in "$@"; do
-    label=$(head -1 "$file" | cut -d',' -f2)
-    header+=",$label"
+for file in "$@" 
+do
+  label=$(head -n1 "$file" | cut -d',' -f2)
+  header+=",$label"
 done
-
 echo "$header"
 
-# For each student ID, build their line
-while read -r id; do
-    line="$id"
-    for file in "$@"; do
-        mark=$(grep "^$id," "$file" | cut -d',' -f2)
-        [[ -z "$mark" ]] && mark="-"  # replace empty with dash
-        line+=",$mark"
-    done
-    echo "$line"
-done < "$temp_dir/student_ids"
+# 3) For each student ID, pull in each file’s mark (or “-” if missing)
+for id in "${indexes[@]}" 
+do
+  line="$id"
+  for file in "$@"; do
+    mark=$(grep "^$id," "$file" | cut -d',' -f2)
+    [[ -z $mark ]] && mark="-"
+    line+=",$mark"
+  done
+  echo "$line"
+done
