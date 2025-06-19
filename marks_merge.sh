@@ -35,3 +35,5 @@ do
     # printing to merged.csv
     echo $index,$prac_mark,$exam_mark >> merged.csv
 done 
+
+rm $file
