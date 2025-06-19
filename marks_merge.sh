@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Remove and recreate merged.csv with header
-rm merged.csv
-touch merged.csv
-echo "number, prac_mark, exam_mark" >> merged.csv
+echo "number,prac_mark,exam_mark"
 
-rm temp.csv
+rm -f temp.csv
 touch temp.csv
 
 file='temp.csv'
@@ -32,8 +29,8 @@ do
         exam_mark='-'
     fi
 
-    # printing to merged.csv
-    echo $index,$prac_mark,$exam_mark >> merged.csv
+    # printing answer
+    echo $index,$prac_mark,$exam_mark
 done 
 
-rm $file
+rm -f $file
