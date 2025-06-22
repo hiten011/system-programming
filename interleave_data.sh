@@ -1,16 +1,22 @@
 #!/bin/bash
 
-touch "merged.csv"
-echo "timestamp,value1" >> merged.csv
+filename="merged.csv"
+touch $filename
+echo "timestamp,value1" > $filename
 
 add() {
-    while IFS="\n"
+    tail -n +2 "$1" | while IFS= read -r line || [[ -n $line ]]
     do
-
-    done << $(tail +2 $1)
+        # echo $line
+        local timestamp=$(cut -d',' -f1 <<< $line)
+        [[ -z $(grep $timestamp $filename) ]] && $(echo "$line" >> "$filename")
+    done
 }
 
 for i in $@
 do
     add $i
 done
+
+cat $filename
+rm $filename
