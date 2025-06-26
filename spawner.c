@@ -1,27 +1,22 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-int main(int argc, char *argv[]) {
-    // storing the arguments
-    char* cmd = argv[1];
-    // printf("%d %s\n", argc, cmd);
+int main(int argc, char* argv[]) {
+    // copying
+    char* cmd = (char*) malloc(sizeof(argv[1]));
+    strcpy(cmd, argv[1]);
 
-    // parsing throught the arguments
-    const int len = strlen(cmd);
-    const char* delimiter = " ";
-    char* token[len];
-    int i = 0;
-
-    token[i] = strtok(cmd, delimiter);
-    while (token[i] != NULL) {
-        i++;
-        token[i] = strtok(NULL, delimiter);
+    // storing cmd
+    char* cmds[100];
+    int index = 0;
+    cmds[index] = strtok(cmd, " ");
+    while (cmds[index] != NULL) {
+        cmds[++index] = strtok(NULL, " ");
     }
-    token[i] = NULL;
-    // printf("%s\n", token[3]);
 
-    // running the excv command
-    execvp(token[0], token);
-    return 1;
+    // running processor
+    execvp(cmds[0], cmds);
+    return 0;
 }

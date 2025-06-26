@@ -1,20 +1,34 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <stdlib.h>
 
 int main() {
-    pid_t pid = fork();
+    FILE* output = fopen("disk-usage.txt", write);
+    FILE* error = fopen("du-errors.txt", write);
 
-    if (pid < 0) {
-        printf("fork failed");
+    int id = fork();
+    if (id < 0) {
+        printf("%s\n", "Fork Failed");
         return 1;
-    } else if (pid == 0) {
-        // Child process
-        system("echo | du -sh /root");
-    } else {
-        // Parent process
-        
+    } 
+    
+    else if (id == 0) {
+        // child process
+
+        // changing file descriptors
+        dup2(output, 1);
+        dup2(error, 2);
+
+        // running process
+        char *args[] = {"du", "-sh", "/root/sp", NULL};
+        execvp(args[0], args);
+    } 
+    
+    else {
+        // parent process
+        wait(NULL);
+        printf("%s\n", "disk usage analysis complete - results have been written to files");
     }
 
     return 0;
