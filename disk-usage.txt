@@ -1,3 +1,0 @@
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/sdd       1007G   20G  936G   3% /
-8.9G	/root

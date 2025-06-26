@@ -3,7 +3,7 @@ INPUT="ls -l"
 all: spawner
 
 clean:
-	rm -f *.out
+	rm -f *.out *.txt
 	clear
 
 spawner: spawner.c
