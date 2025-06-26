@@ -1,0 +1,1 @@
+paste names.txt grades.txt | awk '{ print $(NF - 3),$NF }' > final_marks.txt
